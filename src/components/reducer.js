@@ -8,15 +8,29 @@ function reducer(state,action){
         return {...state,bkmrks:action.data};
       case "UPDATE_MTB":
         return {...state,bkmrksData:{...state.bkmrksData,reloadMaintable:!state.bkmrksData.reloadMaintable}}
+      case "IS_ONLINE":
+        return {...state,isOnlineNow:action.data}
+      case "PAGINATION":
+        let {start,end} = action.data;
+        return {...state,uData:{...state.uData,pagination:{...state.uData.pagination,start,end}}}
+      case "UPDATE_TOTAL_REC":
+        return {...state,uData:{...state.uData,pagination:{...state.uData.pagination,total_records:action.data}}}
       default:
         return state;
     }
+}
+const defvalforpagi = {
+  limit:5,
+  start:0,
+  end:5,
+  total_records:25
 }
 let initialData = {
     uData:{
       isLoading:true,
       info:{message:false},
-      target:"users"
+      target:"users",
+      pagination:{...defvalforpagi}
     },
     bkmrksData:{
         isLoading:false,
@@ -24,6 +38,7 @@ let initialData = {
         target:"bookmarks",
         reloadMaintable:false
     },
-    bkmrks:[]
+    bkmrks:[],
+    isOnlineNow:[true,false]
   }
-export {reducer,initialData};
+export {reducer,initialData,defvalforpagi};

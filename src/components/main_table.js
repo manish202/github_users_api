@@ -30,9 +30,6 @@ function SingleRow({val,srno,bkmrks,target,updateBookedArr,updateMtb}){
         toggleBookmark(id,bkmrks,updateBookedArr);
         if(target === "bookmarks"){updateMtb()}
     }
-    // if(target === "bookmarks" && !isBooked){
-    //     return false;
-    // }
     return <tr>
         <td>{srno + 1}</td>
         <td>{id}</td>
@@ -56,7 +53,9 @@ function Loader(){
 }
 function MainTable({target,isLoading,info}){
     console.log("I Am MainTable Component");
-    let {bkmrks,updateBookedArr,updateMtb} = useContext(MyContext);
+    let {bkmrks,updateBookedArr,updateMtb,updatePagination,uData} = useContext(MyContext);
+    let {pagination} = uData;
+    let {end,limit,total_records} = pagination;
     useEffect(() => {
         let bkdata = localStorage.getItem("github_bkmrk_users");
         if(bkdata){
@@ -82,14 +81,13 @@ function MainTable({target,isLoading,info}){
                 </thead>
                 <tbody>
                     {isLoading && <Loader/>}
-                    {info.message && <tr><td colSpan="6">{info.message}</td></tr>}
-                    { Array.isArray(info) && info.length > 0 && info.map((val,ind) => <SingleRow key={val.id} updateMtb={updateMtb} updateBookedArr={updateBookedArr} target={target} bkmrks={bkmrks} srno={ind} val={val} />) }
+                    {!isLoading && info.message && <tr><td colSpan="6">{info.message}</td></tr>}
+                    {!isLoading && Array.isArray(info) && info.length > 0 && info.map((val,ind) => <SingleRow key={val.id} updateMtb={updateMtb} updateBookedArr={updateBookedArr} target={target} bkmrks={bkmrks} srno={ind} val={val} />) }
                 </tbody>
-                {target === "users" && <tfoot>
-                    <tr>
-                        <td colSpan="6"><button type="button" className="btn btn-light">Load More</button></td>
-                    </tr>
-                </tfoot>}
+                <tfoot>
+                    {target === "users" && end < total_records && !info.message && <tr><td colSpan="6"><button onClick={() => updatePagination({start:end,end:end+limit})} type="button" className="btn btn-light">Load More</button></td></tr>}
+                    {target === "users" && end >= total_records && !info.message && <tr><td colSpan="6"><button type="button" className="btn btn-secondary" disabled>No More Data</button></td></tr>}
+                </tfoot>
             </table>
         </div>
     )
