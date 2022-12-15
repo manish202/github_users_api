@@ -19,8 +19,7 @@ function App() {
   let updateMtb = () => dispatch({type:"UPDATE_MTB"});
   let updateIsOnlineOrNot = (data) => dispatch({type:"IS_ONLINE",data});
   let updatePagination = (data) => dispatch({type:"PAGINATION",data});
-  let updateTotalRecInPagi = (data) => dispatch({type:"UPDATE_TOTAL_REC",data});
-    return <MyContext.Provider value={{...state,updateLoading,updateUdata,updateBookedArr,updateMtb,updateIsOnlineOrNot,updatePagination,updateTotalRecInPagi}}>
+    return <MyContext.Provider value={{...state,updateLoading,updateUdata,updateBookedArr,updateMtb,updateIsOnlineOrNot,updatePagination}}>
       <BrowserRouter>
           <Header/>
           <IsOnline />

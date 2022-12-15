@@ -85,7 +85,7 @@ function MainTable({target,isLoading,info}){
                     {!isLoading && Array.isArray(info) && info.length > 0 && info.map((val,ind) => <SingleRow key={val.id} updateMtb={updateMtb} updateBookedArr={updateBookedArr} target={target} bkmrks={bkmrks} srno={ind} val={val} />) }
                 </tbody>
                 <tfoot>
-                    {target === "users" && end < total_records && !info.message && <tr><td colSpan="6"><button onClick={() => updatePagination({start:end,end:end+limit})} type="button" className="btn btn-light">Load More</button></td></tr>}
+                    {target === "users" && end < total_records && !info.message && <tr><td colSpan="6"><button onClick={() => updatePagination({end:end+limit,limit,total_records})} type="button" className="btn btn-light">Load More</button></td></tr>}
                     {target === "users" && end >= total_records && !info.message && <tr><td colSpan="6"><button type="button" className="btn btn-secondary" disabled>No More Data</button></td></tr>}
                 </tfoot>
             </table>

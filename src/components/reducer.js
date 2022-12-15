@@ -11,19 +11,15 @@ function reducer(state,action){
       case "IS_ONLINE":
         return {...state,isOnlineNow:action.data}
       case "PAGINATION":
-        let {start,end} = action.data;
-        return {...state,uData:{...state.uData,pagination:{...state.uData.pagination,start,end}}}
-      case "UPDATE_TOTAL_REC":
-        return {...state,uData:{...state.uData,pagination:{...state.uData.pagination,total_records:action.data}}}
+        return {...state,uData:{...state.uData,pagination:action.data}}
       default:
         return state;
     }
 }
 const defvalforpagi = {
   limit:5,
-  start:0,
   end:5,
-  total_records:25
+  total_records:null
 }
 let initialData = {
     uData:{
