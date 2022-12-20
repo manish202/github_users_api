@@ -3,6 +3,7 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import {Link} from "react-router-dom";
 import {useState} from "react";
+import {getLocalData} from "./users";
 function Loader(){
     console.log("I Am Loader Component");
     return <tr>
@@ -16,22 +17,18 @@ function Loader(){
 </tr>
 }
 function toggleBookmark(id){
-    let data = localStorage.getItem("github_bkmrk_users");
+    let data = getLocalData("github_bkmrk_users");
     let my_need = [];
-    if(data){
-        data = JSON.parse(data);
-        if(data.includes(id)){
-            my_need = data.filter((val) => val !== id);
-        }else{
-            my_need = [...data,id];
-        }
+    if(data.includes(id)){
+        my_need = data.filter((val) => val !== id);
     }else{
-        my_need = [id];
+        my_need = [...data,id];
     }
     localStorage.setItem("github_bkmrk_users",JSON.stringify(my_need));
 }
-function SingleRow({val,srno,bkmrks,target,updateMtb}){
+function SingleRow({obj}){
     console.log("I Am SingleRow Component");
+    let {updateMtb,bkmrks,ind,val,target} = obj;
     let {id,login,avatar_url,html_url} = val;
     let [isBooked,updateBooked] = useState(bkmrks.includes(id));
     function toggle(id){
@@ -43,7 +40,7 @@ function SingleRow({val,srno,bkmrks,target,updateMtb}){
         return false
     }
     return <tr>
-        <td>{srno + 1}</td>
+        <td>{ind + 1}</td>
         <td>{id}</td>
         <td><img alt={login} src={avatar_url} title={login} className="avtar" /> {login}</td>
         <td><Link className="btn btn-success" to={`/users/${login}`}><RemoveRedEyeIcon /></Link></td>
@@ -53,9 +50,8 @@ function SingleRow({val,srno,bkmrks,target,updateMtb}){
 }
 function MainTable({obj}){
     console.log("I Am MainTable Component");
-    let {target,udata,isLoading,search,updateSearch,updateMtb,loadWithPagination} = obj;
-    let bkmrks_arr = localStorage.getItem("github_bkmrk_users");
-    bkmrks_arr = bkmrks_arr ? JSON.parse(bkmrks_arr):[];
+    let {target,udata,isLoading,search,updateSearch,updateMtb,paginate,pagination} = obj;
+    let bkmrks = getLocalData("github_bkmrk_users");
     return(
             <div id="respo_table" className="container mt-3">
                 <div className="form-group mb-3">
@@ -76,11 +72,11 @@ function MainTable({obj}){
                 <tbody>
                     {isLoading && <Loader/>}
                     {udata.message && <tr><td colSpan="6">{udata.message}</td></tr>}
-                    {Array.isArray(udata) && udata.length > 0 && udata.map((val,ind) => <SingleRow key={val.id} updateMtb={updateMtb} bkmrks={bkmrks_arr} srno={ind} val={val} target={target} />) }
+                    {Array.isArray(udata) && udata.length > 0 && udata.map((val,ind) => <SingleRow key={val.id} obj={{updateMtb,bkmrks,ind,val,target}} />) }
                 </tbody>
                 <tfoot>
-                    {target === "users" && <tr><td colSpan="6"><button onClick={loadWithPagination} type="button" className="btn btn-light">Load More</button></td></tr>}
-                    {target === "users" && <tr><td colSpan="6"><button type="button" className="btn btn-secondary" disabled>No More Data</button></td></tr>}
+                    {target === "users" && pagination.showLoadMore && <tr><td colSpan="6"><button onClick={paginate} type="button" className="btn btn-light">Load More</button></td></tr>}
+                    {target === "users" && !pagination.showLoadMore && <tr><td colSpan="6"><button type="button" className="btn btn-secondary" disabled>No More Data</button></td></tr>}
                 </tfoot>
             </table>
         </div>

@@ -1,8 +1,7 @@
-import {useContext,useEffect} from "react";
-import {MyContext} from "../App";
-function IsOnline(){
+import {useEffect} from "react";
+function IsOnline({obj}){
     console.log("I Am IsOnline Component");
-    let {updateIsOnlineOrNot,isOnlineNow} = useContext(MyContext);
+    let {isOnlineNow,updateIsOnlineOrNot} = obj;
     useEffect(() => {
         window.addEventListener("online",(e) => {
             updateIsOnlineOrNot([true,true]);
