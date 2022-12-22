@@ -16,7 +16,7 @@ this.addEventListener("install",(e) => {
                     "/users",
                     "bookmarks",
                     "/manifest.json",
-                    "/static/js/bundle.js"
+                    "/static/js/main.9afde5d4.js"
                 ])
             })
             .catch(err => console.error(`caches storage custome error 1 = ${err}`))

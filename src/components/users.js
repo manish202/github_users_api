@@ -16,12 +16,16 @@ function Users({isOnlineNow}){
     console.log(`I Am Users Component.`);
     let [udata,updateUdata] = useState({message:false});
     let [isLoading,updateLoading] = useState(false);
-    let [pagination,updatePagination] = useState({page:1,limit:5,showLoadMore:true});
+    let [pagination,updatePagination] = useState({page:1,limit:24,showLoadMore:true});
     let [search,updateSearchTerm] = useState("");
     let [onlineStatus] = isOnlineNow;
     let loadByData = (x) => {
         let {page,limit} = pagination;
         let offset = (page - 1)*limit;
+        let total_pages = Math.ceil(x.length/limit);
+        updatePagination(old => {
+            return page >= total_pages ? {...old,showLoadMore:false}:{...old,showLoadMore:true}
+        })
         x = x.slice(0,offset+limit);
         updateUdata(x);
     }
@@ -30,7 +34,12 @@ function Users({isOnlineNow}){
         if(x.length > 0){
             if(search !== ""){
                 x = x.filter((obj) => obj.login.match(new RegExp(search,"gi")));
-                x.length === 0 ? updateUdata({message:"No Search Data Found!"}):loadByData(x);
+                if(x.length === 0){
+                    updatePagination(old => { return {...old,showLoadMore:false} })
+                    updateUdata({message:"No Search Data Found!"})
+                }else{
+                    loadByData(x)
+                }
             }else{
                 loadByData(x);
             }
@@ -83,6 +92,7 @@ function Users({isOnlineNow}){
             updateLoading(false);
             loadWithPagination();
         }, 300);
+        return () => clearTimeout(x);
     },[pagination.page,search]);
     return <MainTable obj={{target:"users",udata,isLoading,search,updateSearch,paginate,pagination}} />
 }
